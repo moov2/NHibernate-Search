@@ -16,13 +16,13 @@ namespace NHibernate.Search
 
         public static ICriterion Query(string luceneQuery)
         {
-            QueryParser parser = new QueryParser(string.Empty, new StandardAnalyzer());
+            QueryParser parser = new QueryParser(Environment.LuceneVersion, string.Empty, new StandardAnalyzer(Environment.LuceneVersion));
             return Query(parser.Parse(luceneQuery));
         }
 
         public static ICriterion Query(string defaultField, string luceneQuery)
         {
-            QueryParser parser = new QueryParser(defaultField, new StandardAnalyzer());
+            QueryParser parser = new QueryParser(Environment.LuceneVersion, defaultField, new StandardAnalyzer(Environment.LuceneVersion));
             return Query(parser.Parse(luceneQuery));
         }
     }

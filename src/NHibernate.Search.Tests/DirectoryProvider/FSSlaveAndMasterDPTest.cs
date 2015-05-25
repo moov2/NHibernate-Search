@@ -30,82 +30,103 @@ namespace NHibernate.Search.Tests.DirectoryProvider
         [Test]
         public void ProperCopy()
         {
+            var parser = new QueryParser(Environment.LuceneVersion, "id", new StopAnalyzer(Environment.LuceneVersion));
+
             // Assert that the slave index is empty
-            IFullTextSession fullTextSession = Search.CreateFullTextSession(GetSlaveSession());
-            ITransaction tx = fullTextSession.BeginTransaction();
-            QueryParser parser = new QueryParser("id", new StopAnalyzer());
-            IList result = fullTextSession.CreateFullTextQuery(parser.Parse("Location:texas")).List();
-            Assert.AreEqual(0, result.Count, "No copy yet, fresh index expected");
-            tx.Commit();
-            fullTextSession.Close();
+            using (var session = Search.CreateFullTextSession(GetSlaveSession()))
+            using (var tx = session.BeginTransaction())
+            {
+                var result = session.CreateFullTextQuery(parser.Parse("Location:texas")).List();
+                Assert.AreEqual(0, result.Count, "No copy yet, fresh index expected");
+                tx.Commit();
+                session.Close();
+            }
 
             // create an entity on the master and persist it in order to index it
-            ISession session = CreateSession(0);
-            tx = session.BeginTransaction();
-            SnowStorm sn = new SnowStorm();
-            sn.DateTime = DateTime.Now;
-            sn.Location = ("Dallas, TX, USA");
-            session.Persist(sn);
-            tx.Commit();
-            session.Close();
+            using (var session = CreateSession(0))
+            using (var tx = session.BeginTransaction())
+            {
+                session.Persist(new SnowStorm()
+                {
+                    DateTime = DateTime.Now,
+                    Location = ("Dallas, TX, USA")
+                });
 
-            int waitPeriodMilli = 2*1*1000 + 10; //wait a bit more than 2 refresh (one master / one slave)
+                tx.Commit();
+                session.Close();
+            }
+
+            int waitPeriodMilli = 2 * 1 * 1000 + 10; //wait a bit more than 2 refresh (one master / one slave)
             Thread.Sleep(waitPeriodMilli);
 
             // assert that the master has indexed the snowstorm
-            fullTextSession = Search.CreateFullTextSession(GetMasterSession());
-            tx = fullTextSession.BeginTransaction();
-            result = fullTextSession.CreateFullTextQuery(parser.Parse("Location:dallas")).List();
-            Assert.AreEqual(1, result.Count, "Original should get one");
-            tx.Commit();
-            fullTextSession.Close();
+            using (var session = Search.CreateFullTextSession(GetMasterSession()))
+            using (var tx = session.BeginTransaction())
+            {
+                var result = session.CreateFullTextQuery(parser.Parse("Location:dallas")).List();
+                Assert.AreEqual(1, result.Count, "Original should get one");
+                tx.Commit();
+                session.Close();
+            }
 
             // assert that index got copied to the slave as well
-            fullTextSession = Search.CreateFullTextSession(GetSlaveSession());
-            tx = fullTextSession.BeginTransaction();
-            result = fullTextSession.CreateFullTextQuery(parser.Parse("Location:dallas")).List();
-            Assert.AreEqual(1, result.Count, "First copy did not work out");
-            tx.Commit();
-            fullTextSession.Close();
+            using (var session = Search.CreateFullTextSession(GetSlaveSession()))
+            using (var tx = session.BeginTransaction())
+            {
+                var result = session.CreateFullTextQuery(parser.Parse("Location:dallas")).List();
+                Assert.AreEqual(1, result.Count, "First copy did not work out");
+                tx.Commit();
+                session.Close();
+            }
 
             // add a new snowstorm to the master
-            session = GetMasterSession();
-            tx = session.BeginTransaction();
-            sn = new SnowStorm();
-            sn.DateTime = DateTime.Now;
-            sn.Location = ("Chennai, India");
-            session.Persist(sn);
-            tx.Commit();
-            session.Close();
+            using (var session = GetMasterSession())
+            using (var tx = session.BeginTransaction())
+            {
+                session.Persist(new SnowStorm()
+                {
+                    DateTime = DateTime.Now,
+                    Location = ("Chennai, India")
+                });
+                tx.Commit();
+                session.Close();
+            }
 
             Thread.Sleep(waitPeriodMilli); //wait a bit more than 2 refresh (one master / one slave)
 
             // assert that the new snowstorm made it into the slave
-            fullTextSession = Search.CreateFullTextSession(GetSlaveSession());
-            tx = fullTextSession.BeginTransaction();
-            result = fullTextSession.CreateFullTextQuery(parser.Parse("Location:chennai")).List();
-            Assert.AreEqual(1, result.Count, "Second copy did not work out");
-            tx.Commit();
-            fullTextSession.Close();
+            using (var session = Search.CreateFullTextSession(GetSlaveSession()))
+            using (var tx = session.BeginTransaction())
+            {
+                var result = session.CreateFullTextQuery(parser.Parse("Location:chennai")).List();
+                Assert.AreEqual(1, result.Count, "Second copy did not work out");
+                tx.Commit();
+                session.Close();
+            }
 
-            session = GetMasterSession();
-            tx = session.BeginTransaction();
-            sn = new SnowStorm();
-            sn.DateTime = DateTime.Now;
-            sn.Location = ("Melbourne, Australia");
-            session.Persist(sn);
-            tx.Commit();
-            session.Close();
+            using (var session = GetMasterSession())
+            using (var tx = session.BeginTransaction())
+            {
+                session.Persist(new SnowStorm()
+                {
+                    DateTime = DateTime.Now,
+                    Location = ("Melbourne, Australia")
+                });
+                tx.Commit();
+                session.Close();
+            }
 
             Thread.Sleep(waitPeriodMilli); //wait a bit more than 2 refresh (one master / one slave)
 
             // once more - assert that the new snowstorm made it into the slave
-            fullTextSession = Search.CreateFullTextSession(GetSlaveSession());
-            tx = fullTextSession.BeginTransaction();
-            result = fullTextSession.CreateFullTextQuery(parser.Parse("Location:melbourne")).List();
-            Assert.AreEqual(1, result.Count, "Third copy did not work out");
-            tx.Commit();
-            fullTextSession.Close();
+            using (var session = Search.CreateFullTextSession(GetSlaveSession()))
+            using (var tx = session.BeginTransaction())
+            {
+                var result = session.CreateFullTextQuery(parser.Parse("Location:melbourne")).List();
+                Assert.AreEqual(1, result.Count, "Third copy did not work out");
+                tx.Commit();
+                session.Close();
+            }
         }
 
         #region Helper methods

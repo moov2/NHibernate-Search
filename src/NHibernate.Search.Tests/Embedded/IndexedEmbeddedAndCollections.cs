@@ -101,7 +101,7 @@ namespace NHibernate.Search.Tests.Embedded
         {
             IFullTextSession session = Search.CreateFullTextSession(s);
 
-            QueryParser parser = new MultiFieldQueryParser(new string[] { "name", "authors.name" }, new StandardAnalyzer());
+            QueryParser parser = new MultiFieldQueryParser(Environment.LuceneVersion, new string[] { "name", "authors.name" }, new StandardAnalyzer(Environment.LuceneVersion));
 
             Lucene.Net.Search.Query query = parser.Parse("Hugo");
             IList result = session.CreateFullTextQuery(query).List();
@@ -135,7 +135,7 @@ namespace NHibernate.Search.Tests.Embedded
             tx = s.BeginTransaction();
 
             IFullTextSession session = Search.CreateFullTextSession(s);
-            QueryParser parser = new MultiFieldQueryParser(new string[] { "name", "authors.name" }, new StandardAnalyzer());
+            QueryParser parser = new MultiFieldQueryParser(Environment.LuceneVersion, new string[] { "name", "authors.name" }, new StandardAnalyzer(Environment.LuceneVersion));
             Query query = parser.Parse("Proust");
             IList result = session.CreateFullTextQuery(query, typeof(Product)).List();
 

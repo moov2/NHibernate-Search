@@ -142,7 +142,7 @@ namespace NHibernate.Search.Backend.Impl.Lucene
                 string entityName = TypeHelper.LuceneTypeName(entity);
                 while (termDocs.Next())
                 {
-                    int docIndex = termDocs.Doc();
+                    int docIndex = termDocs.Doc;
                     if (entityName.Equals(reader.Document(docIndex).Get(DocumentBuilder.CLASS_FIELDNAME)))
                     {
                         // remove only the one of the right class

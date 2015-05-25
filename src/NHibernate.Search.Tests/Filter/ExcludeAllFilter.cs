@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Util;
 
 namespace NHibernate.Search.Tests.Filter
 {
@@ -11,16 +12,15 @@ namespace NHibernate.Search.Tests.Filter
 
         public override DocIdSet GetDocIdSet(IndexReader reader)
         {
-            throw new NotImplementedException();
-            //if (done)
-            //{
-            //    throw new NotSupportedException("Called twice");
-            //}
+            if (done)
+            {
+                throw new NotSupportedException("Called twice");
+            }
 
-            //BitArray bitArray = new BitArray(reader.MaxDoc());
-            //done = true;
+            BitArray bitArray = new BitArray(reader.MaxDoc);
+            done = true;
 
-            //return bitArray;
+            return new DocIdBitSet(bitArray);
         }
     }
 }

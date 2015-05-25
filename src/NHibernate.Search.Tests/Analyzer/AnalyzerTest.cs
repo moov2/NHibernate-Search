@@ -10,48 +10,57 @@ namespace NHibernate.Search.Tests.Analyzer
     {
         protected override IList Mappings
         {
-            get { return new string[] {"Analyzer.MyEntity.hbm.xml"}; }
+            get { return new string[] { "Analyzer.MyEntity.hbm.xml" }; }
         }
 
         [Test]
         public void TestScopedAnalyzers()
         {
-            MyEntity en = new MyEntity();
-            en.Entity = "Entity";
-            en.Field = "Field";
-            en.Property = "Property";
-            en.Component = new MyComponent();
-            en.Component.ComponentProperty = "component property";
+            using (var session = OpenSession())
+            using (var transaction = session.BeginTransaction())
+            using (var fullTextSession = Search.CreateFullTextSession(session))
+            {
+                using (var ftsTransaction = fullTextSession.BeginTransaction())
+                {
+                    fullTextSession.Save(new MyEntity
+                    {
+                        Entity = "Entity",
+                        Field = "Field",
+                        Property = "Property",
+                        Component = new MyComponent
+                        {
+                            ComponentProperty = "ComponentProperty"
+                        }
+                    });
+                    fullTextSession.Flush();
+                    ftsTransaction.Commit();
+                }
 
-            IFullTextSession s = Search.CreateFullTextSession(OpenSession());
-            ITransaction tx = s.BeginTransaction();
-            s.Save(en);
-            s.Flush();
-            tx.Commit();
+                var parser = new QueryParser(Environment.LuceneVersion, "id", new StandardAnalyzer(Environment.LuceneVersion));
 
-            tx = s.BeginTransaction();
+                using (var ftsTransaction = fullTextSession.BeginTransaction())
+                {
+                    var query1 = fullTextSession.CreateFullTextQuery(parser.Parse("entity:entity"), typeof(MyEntity));
+                    Assert.AreEqual(1, query1.ResultSize, "Entity query");
 
-            QueryParser parser = new QueryParser("id", new StandardAnalyzer());
-            Lucene.Net.Search.Query luceneQuery = parser.Parse("entity:alarm");
-            IFullTextQuery query = s.CreateFullTextQuery(luceneQuery, typeof(MyEntity));
-            Assert.AreEqual(1, query.ResultSize, "Entity query");
+                    var query2 = fullTextSession.CreateFullTextQuery(parser.Parse("property:property"), typeof(MyEntity));
+                    Assert.AreEqual(1, query2.ResultSize, "Property query");
 
-            luceneQuery = parser.Parse("property:cat");
-            query = s.CreateFullTextQuery(luceneQuery, typeof(MyEntity));
-            Assert.AreEqual(1, query.ResultSize, "Property query");
+                    var query3 = fullTextSession.CreateFullTextQuery(parser.Parse("field:field"), typeof(MyEntity));
+                    Assert.AreEqual(1, query3.ResultSize, "Field query");
 
-            luceneQuery = parser.Parse("field:energy");
-            query = s.CreateFullTextQuery(luceneQuery, typeof(MyEntity));
-            Assert.AreEqual(1, query.ResultSize, "Field query");
+                    var query4 = fullTextSession.CreateFullTextQuery(parser.Parse("component.componentProperty:ComponentProperty"));
+                    Assert.AreEqual(1, query4.ResultSize, "Component query");
 
-            luceneQuery = parser.Parse("component.componentProperty:noise");
-            query = s.CreateFullTextQuery(luceneQuery);
-            Assert.AreEqual(1, query.ResultSize, "Component query");
+                    fullTextSession.Delete(query4.UniqueResult());
 
-            s.Delete(query.UniqueResult());
-            tx.Commit();
+                    ftsTransaction.Commit();
+                }
 
-            s.Close();
+                fullTextSession.Close();
+                transaction.Commit();
+                session.Close();
+            }
         }
     }
 }

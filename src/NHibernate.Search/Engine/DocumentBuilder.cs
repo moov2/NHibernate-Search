@@ -33,7 +33,7 @@ namespace NHibernate.Search.Engine
         private readonly IIndexShardingStrategy shardingStrategy;
         private readonly ScopedAnalyzer analyzer;
         private DocumentIdMapping idMapping;
-        private Iesi.Collections.Generic.ISet<Type> mappedSubclasses = new HashedSet<System.Type>();
+        private ISet<Type> mappedSubclasses = new HashSet<System.Type>();
 
         private readonly DocumentMapping rootClassMapping;
 
@@ -50,7 +50,7 @@ namespace NHibernate.Search.Engine
 
             rootClassMapping = classMapping;
 
-            Set<System.Type> processedClasses = new HashedSet<System.Type>();
+            ISet<System.Type> processedClasses = new HashSet<System.Type>();
             processedClasses.Add(classMapping.MappedClass);
             CollectAnalyzers(rootClassMapping, defaultAnalyzer, true, string.Empty, processedClasses);
             //processedClasses.remove( clazz ); for the sake of completness
@@ -83,7 +83,7 @@ namespace NHibernate.Search.Engine
             get { return idMapping.Bridge; }
         }
 
-        public Iesi.Collections.Generic.ISet<System.Type> MappedSubclasses
+        public ISet<System.Type> MappedSubclasses
         {
             get { return mappedSubclasses; }
         }
@@ -175,14 +175,14 @@ namespace NHibernate.Search.Engine
 
             if (rootClassMapping.Boost != null)
             {
-                doc.SetBoost(rootClassMapping.Boost.Value);
+                doc.Boost = rootClassMapping.Boost.Value;
             }
 
             // TODO: Check if that should be an else?
             {
-                Field classField = new Field(CLASS_FIELDNAME, TypeHelper.LuceneTypeName(entityType), Field.Store.YES, Field.Index.UN_TOKENIZED);
+                Field classField = new Field(CLASS_FIELDNAME, TypeHelper.LuceneTypeName(entityType), Field.Store.YES, Field.Index.NOT_ANALYZED);
                 doc.Add(classField);
-                idMapping.Bridge.Set(idMapping.Name, id, doc, Field.Store.YES, Field.Index.UN_TOKENIZED, idMapping.Boost);
+                idMapping.Bridge.Set(idMapping.Name, id, doc, Field.Store.YES, Field.Index.NOT_ANALYZED, idMapping.Boost);
             }
 
             BuildDocumentFields(instance, doc, rootClassMapping, string.Empty);
@@ -243,11 +243,11 @@ namespace NHibernate.Search.Engine
             return result;
         }
 
-        public void PostInitialize(Iesi.Collections.Generic.ISet<System.Type> indexedClasses)
+        public void PostInitialize(ISet<System.Type> indexedClasses)
         {
             // this method does not requires synchronization
             Type plainClass = rootClassMapping.MappedClass;
-            Iesi.Collections.Generic.ISet<Type> tempMappedSubclasses = new HashedSet<System.Type>();
+            ISet<Type> tempMappedSubclasses = new HashSet<System.Type>();
 
             // together with the caller this creates a o(2), but I think it's still faster than create the up hierarchy for each class
             foreach (Type currentClass in indexedClasses)
@@ -386,11 +386,11 @@ namespace NHibernate.Search.Engine
                 case Index.No:
                     return Field.Index.NO;
                 case Index.NoNorms:
-                    return Field.Index.NO_NORMS;
+                    return Field.Index.NOT_ANALYZED_NO_NORMS;
                 case Index.Tokenized:
-                    return Field.Index.TOKENIZED;
+                    return Field.Index.ANALYZED;
                 case Index.UnTokenized:
-                    return Field.Index.UN_TOKENIZED;
+                    return Field.Index.NOT_ANALYZED;
                 default:
                     throw new AssertionFailure("Unexpected Index: " + index);
             }
@@ -405,14 +405,15 @@ namespace NHibernate.Search.Engine
                 case Attributes.Store.Yes:
                     return Field.Store.YES;
                 case Attributes.Store.Compress:
-                    return Field.Store.COMPRESS;
+                    // TODO:RB Refactor compress in NHSearch.Attributes
+                    throw new Exception("Compress is depricated");
                 default:
                     throw new AssertionFailure("Unexpected Store: " + store);
             }
         }
 
         private void CollectAnalyzers(
-            DocumentMapping @class, Analyzer parentAnalyzer, bool isRoot, string prefix, Iesi.Collections.Generic.ISet<System.Type> processedClasses
+            DocumentMapping @class, Analyzer parentAnalyzer, bool isRoot, string prefix, ISet<System.Type> processedClasses
         )
         {
             foreach (var bridge in @class.ClassBridges)

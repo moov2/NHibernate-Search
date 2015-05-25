@@ -10,45 +10,29 @@ using Directory=Lucene.Net.Store.Directory;
 
 namespace NHibernate.Search.Store
 {
-    public class FSDirectoryProvider : IDirectoryProvider
+    public class FSDirectoryProvider : FSDirectoryBase
     {
 		private static IInternalLogger log = LoggerProvider.LoggerFor(typeof(FSDirectoryProvider));
         private FSDirectory directory;
         private String indexName;
 
-        public Directory Directory
+        public override Directory Directory
         {
             get { return directory; }
         }
 
-        public void Initialize(String directoryProviderName, IDictionary<string, string> properties, ISearchFactoryImplementor searchFactory)
+        public override void Initialize(String directoryProviderName, IDictionary<string, string> properties, ISearchFactoryImplementor searchFactory)
         {
-            DirectoryInfo indexDir = DirectoryProviderHelper.DetermineIndexDir(directoryProviderName, (IDictionary) properties);
-            try
-            {
-                bool create = !IndexReader.IndexExists(indexDir.FullName);
-                indexName = indexDir.FullName;
-                directory = FSDirectory.GetDirectory(indexName, create);
+            DirectoryInfo indexDir = DirectoryProviderHelper.DetermineIndexDir(directoryProviderName, (IDictionary)properties);
 
-                if (create)
-                {
-                    IndexWriter iw = new IndexWriter(directory,
-                                                     new StandardAnalyzer(),
-                                                     create,
-                                                     new KeepOnlyLastCommitDeletionPolicy(),
-                                                     IndexWriter.MaxFieldLength.UNLIMITED);
-                    iw.Close();
-                }
+            indexName = indexDir.FullName;
 
-                //searchFactory.RegisterDirectoryProviderForLocks(this);
-            }
-            catch (IOException e)
-            {
-                throw new HibernateException("Unable to initialize index: " + directoryProviderName, e);
-            }
+            var directory = InitializeIndex(indexDir, directoryProviderName);
+
+            this.directory = directory;
         }
 
-        public void Start()
+        public override void Start()
         {
             // All the work is done in initialize
         }
@@ -69,7 +53,7 @@ namespace NHibernate.Search.Store
             // but from a practical POV this is fine since we only call this method
             // after initialize call
             const int hash = 11;
-            return 37*hash + indexName.GetHashCode();
+            return 37 * hash + indexName.GetHashCode();
         }
     }
 }

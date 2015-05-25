@@ -19,7 +19,10 @@ namespace NHibernate.Search.Reader
             try
             {
                 for (int index = 0; index < length; index++)
-                    readers[index] = IndexReader.Open(directoryProviders[index].Directory);
+                {
+                    //TODO:RB: check if reader needs to write
+                    readers[index] = IndexReader.Open(directoryProviders[index].Directory, false);
+                }
             }
             catch (System.IO.IOException ex)
             {

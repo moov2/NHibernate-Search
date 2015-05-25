@@ -296,16 +296,6 @@ namespace NHibernate.Search.Impl
             session.Persist(entityName, obj);
         }
 
-        public object SaveOrUpdateCopy(object obj)
-        {
-            return session.SaveOrUpdateCopy(obj);
-        }
-
-        public object SaveOrUpdateCopy(object obj, object id)
-        {
-            return session.SaveOrUpdateCopy(obj, id);
-        }
-
         public void Delete(object obj)
         {
             session.Delete(obj);
@@ -501,6 +491,21 @@ namespace NHibernate.Search.Impl
             return session.GetSession(entityMode);
         }
 
+        public void Save(string entityName, object obj, object id)
+        {
+            session.Save(entityName, obj, id);
+        }
+
+        public void SaveOrUpdate(string entityName, object obj, object id)
+        {
+            session.SaveOrUpdate(entityName, obj, id);
+        }
+
+        public void Update(string entityName, object obj, object id)
+        {
+            session.SaveOrUpdate(entityName, obj, id);
+        }
+
         #endregion
 
         #region IFullTextSession Members
@@ -509,7 +514,7 @@ namespace NHibernate.Search.Impl
         {
             using (new SessionIdLoggingContext(sessionImplementor.SessionId))
             {
-                QueryParser queryParser = new QueryParser(defaultField, new StandardAnalyzer());
+                QueryParser queryParser = new QueryParser(Environment.LuceneVersion, defaultField, new StandardAnalyzer(Environment.LuceneVersion));
                 Lucene.Net.Search.Query query = queryParser.Parse(queryString);
                 return CreateFullTextQuery(query, typeof (TEntity));
             }
@@ -519,7 +524,7 @@ namespace NHibernate.Search.Impl
         {
             using (new SessionIdLoggingContext(sessionImplementor.SessionId))
             {
-                QueryParser queryParser = new QueryParser(string.Empty, new StandardAnalyzer());
+                QueryParser queryParser = new QueryParser(Environment.LuceneVersion, string.Empty, new StandardAnalyzer(Environment.LuceneVersion));
                 Lucene.Net.Search.Query query = queryParser.Parse(queryString);
                 return CreateFullTextQuery(query, typeof (TEntity));
             }
@@ -611,5 +616,6 @@ namespace NHibernate.Search.Impl
         }
 
         #endregion
+        
     }
 }

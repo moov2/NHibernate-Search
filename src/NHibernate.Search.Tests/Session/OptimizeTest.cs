@@ -40,7 +40,7 @@ namespace NHibernate.Search.Tests.Session
             // Check non-indexed object get indexed by s.index;
             s = new FullTextSessionImpl(OpenSession());
             tx = s.BeginTransaction();
-            QueryParser parser = new QueryParser("id", new StopAnalyzer());
+            QueryParser parser = new QueryParser(Environment.LuceneVersion, "id", new StopAnalyzer(Environment.LuceneVersion));
             int result = s.CreateFullTextQuery(parser.Parse("Body:wrote")).List().Count;
             Assert.AreEqual(2000, result);
 

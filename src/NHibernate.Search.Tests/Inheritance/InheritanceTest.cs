@@ -36,7 +36,7 @@ namespace NHibernate.Search.Tests.Inheritance
             tx.Commit(); //post commit events for lucene
             s.Clear();
             tx = s.BeginTransaction();
-            QueryParser parser = new QueryParser("Name", new StopAnalyzer());
+            QueryParser parser = new QueryParser(Environment.LuceneVersion, "Name", new StopAnalyzer(Environment.LuceneVersion));
 
             Lucene.Net.Search.Query query = parser.Parse("Elephant");
             IQuery hibQuery = s.CreateFullTextQuery(query, typeof(Mammal));

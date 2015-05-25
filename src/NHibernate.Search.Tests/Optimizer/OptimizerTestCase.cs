@@ -86,7 +86,7 @@ namespace NHibernate.Search.Tests.Optimizer
                 {
                     ITransaction tx = s.BeginTransaction();
                     IFullTextSession fts = new Impl.FullTextSessionImpl(s);
-                    QueryParser parser = new QueryParser("id", new StopAnalyzer());
+                    QueryParser parser = new QueryParser(Environment.LuceneVersion, "id", new StopAnalyzer(Environment.LuceneVersion));
                     Lucene.Net.Search.Query query = parser.Parse("name:Gavin");
 
                     bool results = fts.CreateFullTextQuery(query).List().Count > 0;

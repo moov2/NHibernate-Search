@@ -27,9 +27,9 @@ namespace NHibernate.Search.Tests.Filter
 			IFullTextSession s = Search.CreateFullTextSession(OpenSession());
 			s.Transaction.Begin();
 			BooleanQuery query = new BooleanQuery();
-			query.Add(new TermQuery(new Term("teacher", "andre")), BooleanClause.Occur.SHOULD);
-			query.Add(new TermQuery(new Term("teacher", "max")), BooleanClause.Occur.SHOULD);
-			query.Add(new TermQuery(new Term("teacher", "aaron")), BooleanClause.Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "andre")), Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "max")), Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "aaron")), Occur.SHOULD);
 
 			IFullTextQuery ftQuery = s.CreateFullTextQuery(query, typeof(Driver));
 			ftQuery.EnableFullTextFilter("security").SetParameter("Login", "andre");
@@ -47,9 +47,9 @@ namespace NHibernate.Search.Tests.Filter
 			IFullTextSession s = Search.CreateFullTextSession(OpenSession());
 			s.Transaction.Begin();
 			BooleanQuery query = new BooleanQuery();
-			query.Add(new TermQuery(new Term("teacher", "andre")), BooleanClause.Occur.SHOULD);
-			query.Add(new TermQuery(new Term("teacher", "max")), BooleanClause.Occur.SHOULD);
-			query.Add(new TermQuery(new Term("teacher", "aaron")), BooleanClause.Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "andre")), Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "max")), Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "aaron")), Occur.SHOULD);
 
 			IFullTextQuery ftQuery = s.CreateFullTextQuery(query, typeof(Driver));
 			ftQuery.EnableFullTextFilter("bestDriver");
@@ -75,9 +75,9 @@ namespace NHibernate.Search.Tests.Filter
 			IFullTextSession s = Search.CreateFullTextSession(OpenSession());
 			s.Transaction.Begin();
 			BooleanQuery query = new BooleanQuery();
-			query.Add(new TermQuery(new Term("teacher", "andre")), BooleanClause.Occur.SHOULD);
-			query.Add(new TermQuery(new Term("teacher", "max")), BooleanClause.Occur.SHOULD);
-			query.Add(new TermQuery(new Term("teacher", "aaron")), BooleanClause.Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "andre")), Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "max")), Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "aaron")), Occur.SHOULD);
 
 			IFullTextQuery ftQuery = s.CreateFullTextQuery(query, typeof(Driver));
 			Assert.AreEqual(3, ftQuery.ResultSize, "No filter should happen");
@@ -109,13 +109,13 @@ namespace NHibernate.Search.Tests.Filter
 			IFullTextSession s = Search.CreateFullTextSession(OpenSession());
 			s.Transaction.Begin();
 			BooleanQuery query = new BooleanQuery();
-			query.Add(new TermQuery(new Term("teacher", "andre")), BooleanClause.Occur.SHOULD);
-			query.Add(new TermQuery(new Term("teacher", "max")), BooleanClause.Occur.SHOULD);
-			query.Add(new TermQuery(new Term("teacher", "aaron")), BooleanClause.Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "andre")), Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "max")), Occur.SHOULD);
+			query.Add(new TermQuery(new Term("teacher", "aaron")), Occur.SHOULD);
 
 			IFullTextQuery ftQuery = s.CreateFullTextQuery(query, typeof(Driver));
 			ftQuery.EnableFullTextFilter("bestDriver");
-			Lucene.Net.Search.Filter dateFilter = new RangeFilter("delivery", "2001", "2005", true, true);
+			Lucene.Net.Search.Filter dateFilter = new TermRangeFilter("delivery", "2001", "2005", true, true);
 			ftQuery.SetFilter(dateFilter);
 			Assert.AreEqual(1, ftQuery.ResultSize, "Should select only liz");
 

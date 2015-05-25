@@ -30,11 +30,11 @@ namespace NHibernate.Search.Mapping.AttributeBased
         {
             public BuildContext()
             {
-                this.Processed = new HashedSet<Type>();
+                this.Processed = new HashSet<Type>();
             }
 
             public DocumentMapping Root { get; set; }
-            public Iesi.Collections.Generic.ISet<System.Type> Processed { get; private set; }
+            public ISet<System.Type> Processed { get; private set; }
         }
 
         #endregion
@@ -254,6 +254,11 @@ namespace NHibernate.Search.Mapping.AttributeBased
 
                 var localPrefix = embeddedAttribute.Prefix == "." ? member.Name + "." : embeddedAttribute.Prefix;
 
+                // RB: this doesn't identify circular references. a circular reference requires a cycle,
+                //     this throws when a type is reachable twice even if there is no cycle. this should be
+                //     implemented by creating a directed graph between types then doing a topological sort.
+                //     if the topological sort fails, then the graph contains cycles.
+                //     suggest looking into QuickGraph and GraphSharp for that.
                 if (maxLevel == int.MaxValue && context.Processed.Contains(elementType))
                 {
                     throw new SearchException(

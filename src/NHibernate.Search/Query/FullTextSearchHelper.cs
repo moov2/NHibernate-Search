@@ -10,7 +10,7 @@ namespace NHibernate.Search.Query
 {
     public class FullTextSearchHelper
     {
-        public static Lucene.Net.Search.Query FilterQueryByClasses(Iesi.Collections.Generic.ISet<System.Type> classesAndSubclasses, Lucene.Net.Search.Query luceneQuery)
+        public static Lucene.Net.Search.Query FilterQueryByClasses(ISet<System.Type> classesAndSubclasses, Lucene.Net.Search.Query luceneQuery)
         {
             // A query filter is more practical than a manual class filtering post query (esp on scrollable resultsets)
             // it also probably minimise the memory footprint
@@ -22,26 +22,26 @@ namespace NHibernate.Search.Query
             BooleanQuery classFilter = new BooleanQuery();
 
             // annihilate the scoring impact of DocumentBuilder.CLASS_FIELDNAME
-            classFilter.SetBoost(0);
+            classFilter.Boost = 0;
             foreach (System.Type clazz in classesAndSubclasses)
             {
                 Term t = new Term(DocumentBuilder.CLASS_FIELDNAME, TypeHelper.LuceneTypeName(clazz));
                 TermQuery termQuery = new TermQuery(t);
-                classFilter.Add(termQuery, BooleanClause.Occur.SHOULD);
+                classFilter.Add(termQuery, Occur.SHOULD);
             }
 
             BooleanQuery filteredQuery = new BooleanQuery();
-            filteredQuery.Add(luceneQuery, BooleanClause.Occur.MUST);
-            filteredQuery.Add(classFilter, BooleanClause.Occur.MUST);
+            filteredQuery.Add(luceneQuery, Occur.MUST);
+            filteredQuery.Add(classFilter, Occur.MUST);
             return filteredQuery;
         }
 
         public static IndexSearcher BuildSearcher(ISearchFactoryImplementor searchFactory,
-                                             out Iesi.Collections.Generic.ISet<System.Type> classesAndSubclasses,
+                                             out ISet<System.Type> classesAndSubclasses,
                                              params System.Type[] classes)
         {
             IDictionary<System.Type, DocumentBuilder> builders = searchFactory.DocumentBuilders;
-            Iesi.Collections.Generic.ISet<IDirectoryProvider> directories = new HashedSet<IDirectoryProvider>();
+            ISet<IDirectoryProvider> directories = new HashSet<IDirectoryProvider>();
             if (classes == null || classes.Length == 0)
             {
                 // no class means all classes
@@ -58,7 +58,7 @@ namespace NHibernate.Search.Query
             }
             else
             {
-                Iesi.Collections.Generic.ISet<System.Type> involvedClasses = new HashedSet<System.Type>();
+                ISet<System.Type> involvedClasses = new HashSet<System.Type>();
                 involvedClasses.AddAll(classes);
                 foreach (System.Type clazz in classes)
                 {
@@ -91,7 +91,11 @@ namespace NHibernate.Search.Query
             }
 
             IDirectoryProvider[] directoryProviders = new List<IDirectoryProvider>(directories).ToArray();
-            return new IndexSearcher(searchFactory.ReaderProvider.OpenReader(directoryProviders));
+
+            var searcher = new IndexSearcher(searchFactory.ReaderProvider.OpenReader(directoryProviders));
+            searcher.SetDefaultFieldSortScoring(true, true);
+
+            return searcher;
         }
     }
 }

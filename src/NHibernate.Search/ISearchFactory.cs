@@ -1,4 +1,3 @@
-using NHibernate.Search.Engine;
 using NHibernate.Search.Reader;
 using NHibernate.Search.Store;
 
@@ -36,22 +35,5 @@ namespace NHibernate.Search
         /// </summary>
         /// <param name="entityType"></param>
         void Optimize(System.Type entityType);
-
-        /// <summary>
-        /// Gets a FilterDef object by name from the ISearchFactory implementation. 
-        /// A return value indicates if a matching FilterDef was found
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="filter"></param>
-        /// <returns>True/false whether or not a FilterDef exists for the name.</returns>
-        bool TryGetFilterDefinition(string name, out FilterDef filter);
-
-        /// <summary>
-        /// Gets a FilterDef object by name from the ISearchFactory implementation. 
-        /// Throws an exception if one does not exist.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns>A FilterDef object associated with the included name parameter.</returns>
-        FilterDef GetFilterDefinition(string name);
     }
 }

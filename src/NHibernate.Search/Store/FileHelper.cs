@@ -1,5 +1,6 @@
 using System.IO;
 using Iesi.Collections.Generic;
+using System.Collections.Generic;
 
 namespace NHibernate.Search.Store
 {
@@ -16,7 +17,7 @@ namespace NHibernate.Search.Store
             }
 
             FileInfo[] sources = source.GetFiles();
-            ISet<string> srcNames = new HashedSet<string>();
+            ISet<string> srcNames = new HashSet<string>();
             foreach (FileInfo fileInfo in sources)
             {
                 srcNames.Add(fileInfo.Name);

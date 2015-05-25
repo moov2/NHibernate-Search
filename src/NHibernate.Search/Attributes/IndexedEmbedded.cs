@@ -27,7 +27,7 @@ namespace NHibernate.Search.Attributes
 
         /// <summary>
         // Stop indexing embedded elements when depth is reached
-        // depth=1 means the associated element is index, but not its embedded elements
+        // depth=1 means the associated element is indexed, but not its embedded elements
         // Default: infinite (an exception will be raised in case of class circular reference when infinite is chosen)
         /// </summary>
         public int Depth

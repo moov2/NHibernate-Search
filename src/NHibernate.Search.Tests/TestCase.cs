@@ -81,7 +81,9 @@ namespace NHibernate.Test
         public void TestFixtureSetUp()
         {
             if (!RunFixtureSetUpAndTearDownForEachTest)
+            {
                 TestFixtureSetUpInternal();
+            }
         }
 
         private void TestFixtureSetUpInternal()
@@ -89,6 +91,7 @@ namespace NHibernate.Test
             try
             {
                 Configure();
+
                 if (!AppliesTo(Dialect))
                 {
                     Assert.Ignore(GetType() + " does not apply to " + Dialect);
@@ -117,7 +120,9 @@ namespace NHibernate.Test
         public void TestFixtureTearDown()
         {
             if (!RunFixtureSetUpAndTearDownForEachTest)
+            {
                 TestFixtureTearDownInternal();
+            }
         }
 
         private void TestFixtureTearDownInternal()
@@ -134,7 +139,9 @@ namespace NHibernate.Test
         public void SetUp()
         {
             if (RunFixtureSetUpAndTearDownForEachTest)
+            {
                 TestFixtureSetUpInternal();
+            }
 
             OnSetUp();
         }
@@ -159,7 +166,9 @@ namespace NHibernate.Test
             }
 
             if (RunFixtureSetUpAndTearDownForEachTest)
+            {
                 TestFixtureTearDownInternal();
+            }
         }
 
         #endregion

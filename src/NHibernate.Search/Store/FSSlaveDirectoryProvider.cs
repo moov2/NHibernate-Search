@@ -21,7 +21,7 @@ namespace NHibernate.Search.Store
     /// 
     /// A copy is triggered every refresh seconds
     /// </summary>
-    public class FSSlaveDirectoryProvider : IDirectoryProvider
+    public class FSSlaveDirectoryProvider : FSDirectoryBase
     {
 		private static readonly IInternalLogger log = LoggerProvider.LoggerFor(typeof(FSSlaveDirectoryProvider));
         private FSDirectory directory1;
@@ -57,7 +57,7 @@ namespace NHibernate.Search.Store
 
         #region Property methods
 
-        public Directory Directory
+        public override Directory Directory
         {
             get
             {
@@ -77,7 +77,7 @@ namespace NHibernate.Search.Store
 
         #region Public methods
 
-        public void Initialize(String directoryProviderName, IDictionary<string, string> properties, ISearchFactoryImplementor searchFactory)
+        public override void Initialize(String directoryProviderName, IDictionary<string, string> properties, ISearchFactoryImplementor searchFactory)
         {
             this.properties = properties;
             this.directoryProviderName = directoryProviderName;
@@ -113,7 +113,7 @@ namespace NHibernate.Search.Store
             }
         }
 
-        public void Start()
+        public override void Start()
         {
             string refreshPeriod = properties.ContainsKey("refresh") ? properties["refresh"] : "3600";
             long period;
@@ -126,30 +126,13 @@ namespace NHibernate.Search.Store
             period *= 1000;  // per second
             try
             {
-                bool create;
-
-                DirectoryInfo subDir = new DirectoryInfo(Path.Combine(indexName, "1"));
-                create = !IndexReader.IndexExists(subDir.FullName); 
-                directory1 = FSDirectory.GetDirectory(subDir.FullName, create);
-                if (create)
-                {
-                    log.DebugFormat("Initialize index: '{0}'", subDir.FullName);
-                    IndexWriter iw1 = new IndexWriter(directory1, new StandardAnalyzer(), create);
-                    iw1.Close();
-                }
-
-                subDir = new DirectoryInfo(Path.Combine(indexName, "2"));
-                create = !IndexReader.IndexExists(subDir.FullName); 
-                directory2 = FSDirectory.GetDirectory(subDir.FullName, create);
-                if (create)
-                {
-                    log.DebugFormat("Initialize index: '{0}'", subDir.FullName);
-                    IndexWriter iw2 = new IndexWriter(directory2, new StandardAnalyzer(), create);
-                    iw2.Close();
-                }
+                // Initialize
+                this.directory1 = InitializeIndex(new DirectoryInfo(Path.Combine(indexName, "1")));
+                this.directory2 = InitializeIndex(new DirectoryInfo(Path.Combine(indexName, "2")));
 
                 string current1Marker = Path.Combine(indexName, "current1");
                 string current2Marker = Path.Combine(indexName, "current2");
+
                 if (File.Exists(current1Marker))
                 {
                     current = 1;

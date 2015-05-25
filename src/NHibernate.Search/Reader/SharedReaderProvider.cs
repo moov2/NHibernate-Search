@@ -62,7 +62,8 @@ namespace NHibernate.Search.Reader
 		     */
             try
             {
-                reader = IndexReader.Open(directoryProvider.Directory);
+                // TODO:RB: check if reader should be writable
+                reader = IndexReader.Open(directoryProvider.Directory, false);
             }
             catch (IOException e)
             {
@@ -331,8 +332,8 @@ namespace NHibernate.Search.Reader
                                                                BindingFlags.IgnoreCase);
             }
 
-            HashedSet<IDirectoryProvider> providers =
-                new HashedSet<IDirectoryProvider>(searchFactoryImplementor.GetLockableDirectoryProviders().Keys);
+            HashSet<IDirectoryProvider> providers =
+                new HashSet<IDirectoryProvider>(searchFactoryImplementor.GetLockableDirectoryProviders().Keys);
             perDirectoryProviderManipulationLocks = new Dictionary<IDirectoryProvider, object>();
             foreach (IDirectoryProvider dp in providers)
                 perDirectoryProviderManipulationLocks[dp] = new object();
