@@ -1,100 +1,100 @@
 <?xml version="1.0"  ?>
 <project
-		name="NHibernate.Search"
-		default="build"
-		description="NHibernate Search - Integration with Lucene.NET"
-		xmlns="http://nant.sourceforge.net/release/0.92/nant.xsd">
+    name="NHibernate.Search"
+    default="build"
+    description="NHibernate Search - Integration with Lucene.NET"
+    xmlns="http://nant.sourceforge.net/release/0.92/nant.xsd">
 
-	<property name="framework.family" value="${framework::get-family(framework::get-target-framework())}"/>
-	<property name="framework.version" value="${framework::get-version(framework::get-target-framework())}"/>
+  <property name="framework.family" value="${framework::get-family(framework::get-target-framework())}"/>
+  <property name="framework.version" value="${framework::get-version(framework::get-target-framework())}"/>
 
-	<property name="folders.lib" value="lib" />
-	<property name="folders.build" value="build" />
-	<property name="folders.packages" value="src/packages" />
+  <property name="folders.lib" value="lib" />
+  <property name="folders.build" value="build" />
+  <property name="folders.packages" value="src/packages" />
 
-	
-	<target name="clean" description="aasd">
-		<delete dir="${folders.build}" failonerror="false"/>
-	</target>
-	<target name="build" depends="clean">
-		<mkdir dir="${folders.build}"/>
+  
+  <target name="clean" description="aasd">
+    <delete dir="${folders.build}" failonerror="false"/>
+  </target>
+  <target name="build" depends="clean">
+    <mkdir dir="${folders.build}"/>
 
-		<csc target="library"
-			 output="${folders.build}/NHibernate.Search.dll">
-			<nowarn>
-				<warning number="1591" />
-				<warning number="0618" />
-				<warning number="0672" />
-				<!-- No XML comment for publicly visible member -->
-			</nowarn>
-			<sources basedir="src/NHibernate.Search">
-				<include name="**/*.cs"/>
-			</sources>
-			<references>
-				<include name="${folders.packages}/NHibernate.3.3.1.4000/lib/Net35/NHibernate.dll"/>
-				<include name="${folders.packages}/Iesi.Collections.3.3.1.4000/lib/Net35/Iesi.Collections.dll"/>
-				<include name="${folders.packages}/Lucene.Net.2.9.4.1/lib/net40/Lucene.Net.dll"/>
-				<include name="${folders.packages}/SharpZipLib.0.86.0/lib/20/ICSharpCode.SharpZipLib.dll"/>
-				
-			</references>
-			<resources basedir="src/NHibernate.Search" prefix="NHibernate.Search" dynamicprefix="true">
-				<include name="**/*.xsd"/>
-				<exclude name="**/bin/**/*.xsd"/>
-				<exclude name="**/obj/**/*.xsd"/>
-			</resources>
-		</csc>
+    <csc target="library"
+       output="${folders.build}/NHibernate.Search.dll">
+      <nowarn>
+        <warning number="1591" />
+        <warning number="0618" />
+        <warning number="0672" />
+        <!-- No XML comment for publicly visible member -->
+      </nowarn>
+      <sources basedir="src/NHibernate.Search">
+        <include name="**/*.cs"/>
+      </sources>
+      <references>
+        <include name="${folders.packages}/NHibernate.4.0.4.4000/lib/Net40/NHibernate.dll"/>
+        <include name="${folders.packages}/Iesi.Collections.4.0.1.4000/lib/Net40/Iesi.Collections.dll"/>
+        <include name="${folders.packages}/Lucene.Net.3.0.3/lib/net40/Lucene.Net.dll"/>
+        <include name="${folders.packages}/SharpZipLib.0.86.0/lib/20/ICSharpCode.SharpZipLib.dll"/>
+        
+      </references>
+      <resources basedir="src/NHibernate.Search" prefix="NHibernate.Search" dynamicprefix="true">
+        <include name="**/*.xsd"/>
+        <exclude name="**/bin/**/*.xsd"/>
+        <exclude name="**/obj/**/*.xsd"/>
+      </resources>
+    </csc>
 
-		<csc target="library"
-			 output="${folders.build}/NHibernate.Search.Tests.dll"		>
-			<nowarn>
-				<warning number="1591" />
-				<warning number="0618" />
-				<warning number="0672" />
-				<!-- No XML comment for publicly visible member -->
-			</nowarn>
-			<sources basedir="src/NHibernate.Search.Tests">
-				<include name="**/*.cs"/>
-			</sources>
-			<references>
-				<include name="${folders.packages}/NHibernate.3.3.1.4000/lib/Net35/NHibernate.dll"/>
-				<include name="${folders.packages}/Iesi.Collections.3.3.1.4000/lib/Net35/Iesi.Collections.dll"/>
-				<include name="${folders.packages}/Lucene.Net.2.9.4.1/lib/net40/Lucene.Net.dll"/>
-				<include name="${folders.packages}/SharpZipLib.0.86.0/lib/20/ICSharpCode.SharpZipLib.dll"/>
-				<include name="${folders.packages}/Log4net.2.0.0/lib/net40-full/log4net.dll"/>
-				<include name="${folders.packages}/NUnit.2.6.0.12054/lib/nunit.framework.dll"/>
-				<include name="${folders.build}/NHibernate.Search.dll"/>
-				
-			</references>
-			<resources basedir="src/NHibernate.Search.Tests" prefix="NHibernate.Search.Tests" dynamicprefix="true">
-				<include name="**/*.hbm.xml"/>
-				<exclude name="**/bin/**/*.hbm.xml"/>
-				<exclude name="**/obj/**/*.hbm.xml"/>
-			</resources>
-		</csc>
+    <csc target="library"
+       output="${folders.build}/NHibernate.Search.Tests.dll"		>
+      <nowarn>
+        <warning number="1591" />
+        <warning number="0618" />
+        <warning number="0672" />
+        <!-- No XML comment for publicly visible member -->
+      </nowarn>
+      <sources basedir="src/NHibernate.Search.Tests">
+        <include name="**/*.cs"/>
+      </sources>
+      <references>
+        <include name="${folders.packages}/NHibernate.4.0.4.4000/lib/Net40/NHibernate.dll"/>
+        <include name="${folders.packages}/Iesi.Collections.4.0.1.4000/lib/Net40/Iesi.Collections.dll"/>
+        <include name="${folders.packages}/Lucene.Net.3.0.3/lib/net40/Lucene.Net.dll"/>
+        <include name="${folders.packages}/SharpZipLib.0.86.0/lib/20/ICSharpCode.SharpZipLib.dll"/>
+        <include name="${folders.packages}/Log4net.2.0.3/lib/net40-full/log4net.dll"/>
+        <include name="${folders.packages}/NUnit.2.6.3/lib/nunit.framework.dll"/>
+        <include name="${folders.build}/NHibernate.Search.dll"/>
+        
+      </references>
+      <resources basedir="src/NHibernate.Search.Tests" prefix="NHibernate.Search.Tests" dynamicprefix="true">
+        <include name="**/*.hbm.xml"/>
+        <exclude name="**/bin/**/*.hbm.xml"/>
+        <exclude name="**/obj/**/*.hbm.xml"/>
+      </resources>
+    </csc>
 
-		<copy file="src/NHibernate.Search.Tests/App.config"
-			  tofile="${folders.build}/NHibernate.Search.Tests.dll.config"
-			  if="${file::exists('src/NHibernate.Search.Tests/App.config')}"
-		/>
+    <copy file="src/NHibernate.Search.Tests/App.config"
+        tofile="${folders.build}/NHibernate.Search.Tests.dll.config"
+        if="${file::exists('src/NHibernate.Search.Tests/App.config')}"
+    />
 
-		<copy todir="build" flatten="true">
-			<fileset>
-				<include name="${folders.packages}/NHibernate.3.3.1.4000/lib/Net35/NHibernate.dll"/>
-				<include name="${folders.packages}/Iesi.Collections.3.3.1.4000/lib/Net35/Iesi.Collections.dll"/>
-				<include name="${folders.packages}/Lucene.Net.2.9.4.1/lib/net40/Lucene.Net.dll"/>
-				<include name="${folders.packages}/SharpZipLib.0.86.0/lib/20/ICSharpCode.SharpZipLib.dll"/>
-			</fileset>
-		</copy>
-	</target>
+    <copy todir="build" flatten="true">
+      <fileset>
+        <include name="${folders.packages}/NHibernate.4.0.4.4000/lib/Net40/NHibernate.dll"/>
+        <include name="${folders.packages}/Iesi.Collections.4.0.1.4000/lib/Net40/Iesi.Collections.dll"/>
+        <include name="${folders.packages}/Lucene.Net.3.0.3/lib/net40/Lucene.Net.dll"/>
+        <include name="${folders.packages}/SharpZipLib.0.86.0/lib/20/ICSharpCode.SharpZipLib.dll"/>
+      </fileset>
+    </copy>
+  </target>
 
-	<target name="test"
-			depends="build">
-		<nunit2>
-			<formatter type="Xml"
-			           usefile="true"
-			           extension=".xml" />
-			<test assemblyname="${folders.build}/NHibernate.Search.Tests.dll"/>
-		</nunit2>
-	</target>
+  <target name="test"
+      depends="build">
+    <nunit2>
+      <formatter type="Xml"
+                 usefile="true"
+                 extension=".xml" />
+      <test assemblyname="${folders.build}/NHibernate.Search.Tests.dll"/>
+    </nunit2>
+  </target>
 
 </project>
