@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>NHibernate.Search</id>
+    <id>NHibernate.Search.M2</id>
 	<title>NHibernate Search</title>
-    <version>2.1.0.1000</version>
+    <version>4.0.5.4000</version>
     <authors>NHibernate Community</authors>
     <owners>Dario Quintana</owners>
 	<licenseUrl>http://www.gnu.org/licenses/lgpl.html</licenseUrl>
@@ -18,8 +18,8 @@
 	</description>
     <tags>NHibernate Search Lucene FullText Text</tags>
     <dependencies>
-      <dependency id="NHibernate" version="3.3.1.4000" />
-	  <dependency id="Lucene" version="2.9.4.1" />   
+      <dependency id="NHibernate" version="4.0.4.4000" />
+	  <dependency id="Lucene" version="3.0.3" />   
     </dependencies>
   </metadata>
   <files>  

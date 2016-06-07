@@ -1,5 +1,3 @@
-using NHibernate.Search.Filter;
-
 namespace NHibernate.Search
 {
     public class Environment
@@ -62,13 +60,13 @@ namespace NHibernate.Search
         public const string SourceBase = "sourceBase";
         public const string Source = "source";
         public const string IndexBase = "indexBase";
-        
+
         /// <summary>
         /// RB: NEW
         /// Maximum number of documents returned by search.
         /// Lower settings may cause some tests to fail.
         /// </summary>
-        public const int MaxResults = 4096;
+        public const int MaxResults = int.MaxValue;
 
         /// <summary>
         /// RB: NEW
