@@ -21,9 +21,11 @@
 *.sbr
 *.scc
 *.tokens
+*.csdat
 [Bb]in
 [Db]ebug*/
 obj/
+packages/
 [Rr]elease*/
 *resharper*
 _ReSharper*/
