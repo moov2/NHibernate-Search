@@ -3,7 +3,7 @@
   <metadata>
     <id>NHibernate.Search.M2</id>
 	<title>NHibernate Search</title>
-    <version>4.0.6.4000</version>
+    <version>4.0.7.4000</version>
     <authors>NHibernate Community</authors>
     <owners>Dario Quintana</owners>
 	<licenseUrl>http://www.gnu.org/licenses/lgpl.html</licenseUrl>
@@ -18,7 +18,7 @@
 	</description>
     <tags>NHibernate Search Lucene FullText Text</tags>
     <dependencies>
-      <dependency id="NHibernate" version="4.0.4.4000" />
+      <dependency id="NHibernate" version="4.1.1.4000" />
 	  <dependency id="Lucene.Net" version="3.0.3" />   
     </dependencies>
   </metadata>
