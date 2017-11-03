@@ -41,3 +41,4 @@ current-test-configuration
 NHibernate.VisualState.xml
 src/packages/
 *.ncrunch*
+*.nupkg
