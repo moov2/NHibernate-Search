@@ -6,6 +6,7 @@ using NHibernate.Search.Backend.Impl.Lucene;
 using NHibernate.Search.Engine;
 using NHibernate.Search.Impl;
 using NHibernate.Util;
+using NHibernate.Proxy;
 
 namespace NHibernate.Search.Backend.Impl
 {
@@ -120,7 +121,7 @@ namespace NHibernate.Search.Backend.Impl
                 queue[i] = null; // help GC and avoid 2 loaded queues in memory
                 System.Type entityClass = work.Entity is System.Type
                                           ? (System.Type)work.Entity
-                                          : NHibernateUtil.GetClass(work.Entity);
+                                          : NHibernateProxyHelper.GuessClass(work.Entity);
 
                 DocumentBuilder builder = this.searchFactoryImplementor.DocumentBuilders[entityClass];
                 if (builder == null)

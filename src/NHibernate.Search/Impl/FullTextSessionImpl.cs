@@ -13,6 +13,7 @@ using NHibernate.Search.Query;
 using NHibernate.Search.Util;
 using NHibernate.Stat;
 using NHibernate.Type;
+using NHibernate.Proxy;
 
 namespace NHibernate.Search.Impl
 {
@@ -561,7 +562,7 @@ namespace NHibernate.Search.Impl
                     return this;
                 }
 
-                System.Type clazz = NHibernateUtil.GetClass(entity);
+                System.Type clazz = NHibernateProxyHelper.GuessClass(entity);
                 ISearchFactoryImplementor searchFactoryImplementor = SearchFactoryImplementor;
 
                 // TODO: Cache that at the FTSession level

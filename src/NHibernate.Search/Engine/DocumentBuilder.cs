@@ -524,7 +524,7 @@ namespace NHibernate.Search.Engine
                     foreach (object arrayValue in array)
                     {
                         // Highly inneficient but safe wrt the actual targeted class, e.g. polymorphic items in the array
-                        System.Type valueType = NHibernateUtil.GetClass(arrayValue);
+                        System.Type valueType = NHibernateProxyHelper.GuessClass(arrayValue);
                         if (valueType == null || !searchFactoryImplementor.DocumentBuilders.ContainsKey(valueType))
                         {
                             continue;
@@ -551,7 +551,7 @@ namespace NHibernate.Search.Engine
                     foreach (object collectionValue in collection)
                     {
                         // Highly inneficient but safe wrt the actual targeted class, e.g. polymorphic items in the array
-                        System.Type valueType = NHibernateUtil.GetClass(collectionValue);
+                        System.Type valueType = NHibernateProxyHelper.GuessClass(collectionValue);
                         if (valueType == null || !searchFactoryImplementor.DocumentBuilders.ContainsKey(valueType))
                         {
                             continue;
@@ -563,7 +563,7 @@ namespace NHibernate.Search.Engine
                 }
                 else
                 {
-                    System.Type valueType = NHibernateUtil.GetClass(value);
+                    System.Type valueType = NHibernateProxyHelper.GuessClass(value);
                     if (valueType == null || !searchFactoryImplementor.DocumentBuilders.ContainsKey(valueType))
                     {
                         continue;
