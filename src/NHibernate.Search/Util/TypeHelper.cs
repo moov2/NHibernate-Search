@@ -1,3 +1,6 @@
+using NHibernate.Search.Attributes;
+using System.Linq;
+
 namespace NHibernate.Search.Util
 {
     /// <summary>
@@ -12,6 +15,13 @@ namespace NHibernate.Search.Util
         /// <returns></returns>
         public static string LuceneTypeName(System.Type type)
         {
+            var attr = type.GetCustomAttributes(typeof(IndexedAttribute), false).FirstOrDefault();
+
+            if (attr != null && ((IndexedAttribute)attr).HibernateClass != null)
+            {
+                type = ((IndexedAttribute)attr).HibernateClass;
+            }
+
             return type.FullName + ", " + type.Assembly.GetName().Name;
         }
     }
